@@ -1,6 +1,6 @@
 
 #include "Window/WindowManager.hpp"
-#include "Window/Context.hpp"
+#include "Window/Window.hpp"
 
 int main(int argc, char* argv[])
 {

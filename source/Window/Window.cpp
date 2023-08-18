@@ -1,4 +1,4 @@
-#include "Window/Context.hpp"
+#include "Window/Window.hpp"
 
 #include "Window/WindowManager.hpp"
 #include "Graphics/Graphics.hpp"

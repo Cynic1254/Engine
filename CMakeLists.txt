@@ -10,13 +10,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(EXECUTABLE_SRC
         source/Engine/main.cpp
         source/Window/WindowManager.cpp
-        source/Window/Context.cpp
+        source/Window/Window.cpp
         source/Graphics/Graphics.cpp
 )
 
 set(EXECUTABLE_INC
         include/Window/WindowManager.hpp
-        include/Window/Context.hpp
+        include/Window/Window.hpp
         include/Graphics/Graphics.hpp
 )
 

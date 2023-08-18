@@ -1,6 +1,6 @@
 #include "Window/WindowManager.hpp"
 
-#include "Window/Context.hpp"
+#include "Window/Window.hpp"
 #include "Graphics/Graphics.hpp"
 
 #include "GLFW/glfw3.h"
