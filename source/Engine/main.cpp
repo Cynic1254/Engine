@@ -10,9 +10,16 @@ int main(int argc, char* argv[])
     
     window->makeContextCurrent();
     
+    window->SetClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    
     while (!window->shouldClose()) {
+        window->Clear();
+        
+        window->SwapBuffers();
         windowManager.PollEvents();
     }
+    
+    window.reset();
     
     windowManager.Shutdown();
     

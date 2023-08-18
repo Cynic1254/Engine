@@ -23,4 +23,7 @@ void Graphics::SetViewport(int x, int y, int width, int height) {
 void Graphics::SetClearColor(float r, float g, float b, float a) {
     glClearColor(r, g, b, a);
 }
+void Graphics::Clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 } // Graphics

@@ -52,9 +52,10 @@ void WindowManager::LogError(int error, const char *description) {
 }
 
 std::unique_ptr<Window> WindowManager::CreateWindow(int width, int height, const char *title) {
-    auto* p_window = new Window(width, height, title, this);
+    auto* p_window = new Window(width, height, title);
     return std::unique_ptr<Window>(p_window);
 }
+
 bool WindowManager::RequestContext(Window *window) {
     if (CurrentContext == window)
         return true;
