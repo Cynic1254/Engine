@@ -73,6 +73,7 @@ void WindowManager::RemoveIfCurrent(Window *window) {
 void WindowManager::Shutdown() {
     glfwTerminate();
 }
+
 void WindowManager::PollEvents() {
     glfwPollEvents();
 }

@@ -1,6 +1,8 @@
 #include "Window/Window.hpp"
 
 #include "Window/WindowManager.hpp"
+#include "Window/GuiContextManager.hpp"
+#include "Window/GuiContext.hpp"
 #include "Graphics/Graphics.hpp"
 
 #include "GLFW/glfw3.h"
@@ -11,14 +13,19 @@ namespace Window {
 
 Window::~Window() {
     WindowManager::GetInstance().RemoveIfCurrent(this);
+    
+    gui_context_.reset();
+    
     glfwDestroyWindow(window_);
 }
 
-Window::Window(int width, int height, const char *name) {
+Window::Window(int width, int height, const char *name) : width_(width), height_(height){
     window_ = glfwCreateWindow(width, height, name, nullptr, nullptr);
     if (window_ == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
     }
+    
+    gui_context_ = GuiContextManager::GetInstance().CreateContext(this);
 }
 
 bool Window::makeContextCurrent() {

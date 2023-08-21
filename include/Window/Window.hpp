@@ -1,6 +1,7 @@
 #ifndef ENGINE_SOURCE_WINDOW_WINDOW_HPP_
 #define ENGINE_SOURCE_WINDOW_WINDOW_HPP_
 
+#include <memory>
 namespace Graphics {
     class Graphics;
 }
@@ -8,6 +9,8 @@ namespace Graphics {
 struct GLFWwindow;
 
 namespace Window {
+
+class GuiContext;
 
 class WindowManager;
 
@@ -29,17 +32,21 @@ public:
     void SetClearColor(float r, float g, float b, float a);
     /// \brief Clears the screen granting context if window is not current context
     void Clear();
+    
+    [[nodiscard]] inline GuiContext& GetGuiContext() const { return *gui_context_; };
 protected:
 private:
     explicit Window(int width, int height, const char *name);
 
     GLFWwindow *window_ = nullptr;
+    std::unique_ptr<GuiContext> gui_context_ = nullptr;
     
     int width_ = 0;
     int height_ = 0;
 
     friend class WindowManager;
     friend class Graphics::Graphics;
+    friend class GuiContextManager;
 };
 
 } // Window
