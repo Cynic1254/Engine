@@ -53,6 +53,15 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Extern/glfw)
 #add imgui to project
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Extern/ImGui)
 
+#test if being build on linux and install libxrandr development package
+if(UNIX AND NOT APPLE)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(XRANDR REQUIRED xrandr)
+    include_directories(${XRANDR_INCLUDE_DIRS})
+    link_directories(${XRANDR_LIBRARY_DIRS})
+    add_definitions(${XRANDR_CFLAGS_OTHER})
+endif()
+
 #link glfw to ImGui
 target_link_libraries(ImGui glfw)
 
