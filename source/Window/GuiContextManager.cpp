@@ -29,15 +29,7 @@ void GuiContextManager::RemoveIfCurrent(GuiContext *context) {
 }
 
 std::unique_ptr<GuiContext> GuiContextManager::CreateContext(Window *window) {
-    auto* context = new GuiContext(window);
-    
-    RequestContext(context);
-    window->makeContextCurrent();
-    
-    ImGui_ImplGlfw_InitForOpenGL(window->window_, true);
-    ImGui_ImplOpenGL3_Init("#version 460");
-    
-    return std::unique_ptr<GuiContext>(context);
+    return std::unique_ptr<GuiContext>(new GuiContext(window));
 }
 
 GuiContextManager::GuiContextManager() {

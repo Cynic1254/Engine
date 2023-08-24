@@ -34,6 +34,9 @@ public:
     void Clear();
     
     [[nodiscard]] inline GuiContext& GetGuiContext() const { return *gui_context_; };
+    [[nodiscard]] inline int GetWidth() const { return width_; };
+    [[nodiscard]] inline int GetHeight() const { return height_; };
+    [[nodiscard]] inline GLFWwindow* GetWindow() const { return window_; };
 protected:
 private:
     explicit Window(int width, int height, const char *name);
@@ -46,7 +49,9 @@ private:
 
     friend class WindowManager;
     friend class Graphics::Graphics;
-    friend class GuiContextManager;
+    
+    Graphics::Graphics* graphics_ = nullptr;
+    //friend class GuiContext;
 };
 
 } // Window

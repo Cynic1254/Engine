@@ -3,12 +3,14 @@
 
 #include <memory>
 
+#include "Tools/Singleton.hpp"
+
 namespace Window {
 
 class Window;
 
 /// \brief Manager Class for windows
-class WindowManager {
+class WindowManager : public Tools::Singleton<WindowManager> {
 public:
     /// \brief Creates a window and returns a unique_ptr to it
     /// \param width width of the window
@@ -16,12 +18,6 @@ public:
     /// \param title title of the window
     /// \return Unique pointer to the created window
     std::unique_ptr<Window> CreateWindow(int width, int height, const char *title);
-    
-    //make Window manager a singleton
-    static WindowManager& GetInstance() {
-        static WindowManager instance;
-        return instance;
-    }
     
     /// \brief Shuts down the window manager
     void Shutdown();
@@ -53,15 +49,10 @@ private:
     Window* CurrentContext = nullptr;
     
     friend class Window;
+    friend class Tools::Singleton<WindowManager>;
     
     WindowManager();
     ~WindowManager();
-    
-public:
-    WindowManager(const WindowManager&) = delete;
-    WindowManager& operator=(const WindowManager&) = delete;
-    WindowManager(WindowManager&&) = delete;
-    WindowManager& operator=(WindowManager&&) = delete;
 };
 
 } // Window

@@ -12,11 +12,11 @@
 namespace Window {
 
 Window::~Window() {
-    WindowManager::GetInstance().RemoveIfCurrent(this);
-    
     gui_context_.reset();
     
     glfwDestroyWindow(window_);
+    
+    WindowManager::GetSingleton().RemoveIfCurrent(this);
 }
 
 Window::Window(int width, int height, const char *name) : width_(width), height_(height){
@@ -24,14 +24,18 @@ Window::Window(int width, int height, const char *name) : width_(width), height_
     if (window_ == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
     }
+
+    glfwMakeContextCurrent(window_);
+    WindowManager::GetSingleton().CurrentContext = this;
     
-    gui_context_ = GuiContextManager::GetInstance().CreateContext(this);
+    graphics_ = new Graphics::Graphics();
+    gui_context_ = GuiContextManager::GetSingleton().CreateContext(this);
 }
 
 bool Window::makeContextCurrent() {
 
-    if (WindowManager::GetInstance().RequestContext(this)) {
-        Graphics::Graphics::GetInstance().SetViewport(0, 0, width_, height_);
+    if (WindowManager::GetSingleton().RequestContext(this)) {
+        graphics_->SetViewport(0, 0, width_, height_);
         return true;
     }
     
@@ -46,13 +50,13 @@ void Window::SwapBuffers() {
     glfwSwapBuffers(window_);
 }
 void Window::SetClearColor(float r, float g, float b, float a) {
-    WindowManager::GetInstance().RequestContext(this);
-    Graphics::Graphics::GetInstance().SetClearColor(r, g, b, a);
+    WindowManager::GetSingleton().RequestContext(this);
+    graphics_->SetClearColor(r, g, b, a);
 }
 
 void Window::Clear() {
-    WindowManager::GetInstance().RequestContext(this);
-    Graphics::Graphics::GetInstance().Clear();
+    WindowManager::GetSingleton().RequestContext(this);
+    graphics_->Clear();
 }
 
 } // Window

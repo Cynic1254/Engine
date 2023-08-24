@@ -19,8 +19,7 @@ WindowManager::WindowManager() {
         std::cerr << "WindowManager already initialized!" << std::endl;
 }
 
-WindowManager::~WindowManager() {
-}
+WindowManager::~WindowManager() = default;
 
 bool WindowManager::Initialize() {
     glfwSetErrorCallback(LogError);
@@ -51,7 +50,7 @@ void WindowManager::LogError(int error, const char *description) {
     error_logged_ = true;
 }
 
-std::unique_ptr<Window> WindowManager::CreateWindow(int width, int height, const char *title) {
+std::unique_ptr<Window> WindowManager::CreateWindow(int width, int height, const char *title) { // NOLINT(*-convert-member-functions-to-static)
     auto* p_window = new Window(width, height, title);
     return std::unique_ptr<Window>(p_window);
 }
@@ -61,8 +60,6 @@ bool WindowManager::RequestContext(Window *window) {
         return true;
 
     glfwMakeContextCurrent(window->window_);
-    
-    return Graphics::Graphics::GetInstance().LoadContext();
 }
 
 void WindowManager::RemoveIfCurrent(Window *window) {
@@ -70,11 +67,11 @@ void WindowManager::RemoveIfCurrent(Window *window) {
         CurrentContext = nullptr;
 }
 
-void WindowManager::Shutdown() {
+void WindowManager::Shutdown() { // NOLINT(*-convert-member-functions-to-static)
     glfwTerminate();
 }
 
-void WindowManager::PollEvents() {
+void WindowManager::PollEvents() { // NOLINT(*-convert-member-functions-to-static)
     glfwPollEvents();
 }
 

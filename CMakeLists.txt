@@ -27,16 +27,19 @@ set(EXECUTABLE_INC
         include/Graphics/Graphics.hpp
 )
 
-set(GLAD_SRC
-        source/glad.c
+set(GL_SRC
+        #source/glad.c
+        include/Tools/types.hpp
+        include/Graphics/GLFunctions.hpp
 )
 
-set(DEBUG_SRC
+set(TOOLS_SRC
         source/Debugging/ExceptionBase.cpp
 )
 
-set(DEBUG_INC
+set(TOOLS_INC
         include/Debugging/ExceptionBase.hpp
+        include/Tools/Singleton.hpp
 )
 
 #set glfw options
@@ -57,13 +60,16 @@ target_link_libraries(ImGui glfw)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #add debug library
-add_library(DebugLib STATIC ${DEBUG_SRC} ${DEBUG_INC})
+add_library(ToolLib STATIC ${TOOLS_SRC} ${TOOLS_INC})
 
 #add executable
-add_executable(Engine ${EXECUTABLE_SRC} ${GLAD_SRC})
+add_executable(Engine ${EXECUTABLE_SRC} ${EXECUTABLE_INC} ${GL_SRC})
 
 #link debug library to executable
-target_link_libraries(Engine DebugLib)
+target_link_libraries(Engine ToolLib)
+
+#link tools library to executable
+#target_link_libraries(Engine ToolsLib)
 
 #link glfw to executable
 target_link_libraries(Engine glfw)

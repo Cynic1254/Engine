@@ -23,7 +23,7 @@ protected:
     ImGuiContext* m_context;
     Window* m_window;
 private:
-    GuiContext(Window* window);
+    explicit GuiContext(Window* window);
     
     friend class GuiContextManager;
 };

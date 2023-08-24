@@ -5,20 +5,15 @@
 
 #include <memory>
 
+#include "Tools/Singleton.hpp"
+
 namespace Window {
 
 class GuiContext;
 class Window;
 
-class GuiContextManager {
+class GuiContextManager : public Tools::Singleton<GuiContextManager>{
 public:
-//make class a singleton
-    static GuiContextManager& GetInstance() {
-        static GuiContextManager instance;
-        return instance;
-    }
-//end singleton
-
     std::unique_ptr<GuiContext> CreateContext(Window *window);
 protected:
 private:
@@ -31,13 +26,7 @@ private:
     GuiContext* CurrentContext = nullptr;
     
     friend class GuiContext;
-    friend class Window;
-public:
-    GuiContextManager(GuiContextManager const&) = delete;
-    void operator=(GuiContextManager const&) = delete;
-    
-    GuiContextManager(GuiContextManager&&) = delete;
-    GuiContextManager& operator=(GuiContextManager&&) = delete;
+    friend class Tools::Singleton<GuiContextManager>;
 };
 
 } // Window
