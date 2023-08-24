@@ -42,13 +42,16 @@ set(TOOLS_INC
         include/Tools/Singleton.hpp
 )
 
-#test if being build on linux and install libxrandr development package
+#test if on linux and install xorg-dev libglu1-mesa-dev
+# Include required packages if on Linux
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(XRANDR REQUIRED xrandr)
-    include_directories(${XRANDR_INCLUDE_DIRS})
-    link_directories(${XRANDR_LIBRARY_DIRS})
-    add_definitions(${XRANDR_CFLAGS_OTHER})
+    pkg_search_module(X11 REQUIRED x11)
+    pkg_search_module(GLU REQUIRED glu)
+
+    # Additional packages you might need can be added here
+
+    include_directories(${X11_INCLUDE_DIRS} ${GLU_INCLUDE_DIRS})
 endif()
 
 #set glfw options
