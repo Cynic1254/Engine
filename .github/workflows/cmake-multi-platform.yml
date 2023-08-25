@@ -57,6 +57,7 @@ jobs:
     - name: Install necessary packages on Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
+        cd extern/glfw
         sudo apt-get update
         sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev wayland-protocols libwayland-dev libxkbcommon-dev
 
