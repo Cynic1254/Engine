@@ -56,15 +56,18 @@ std::unique_ptr<Window> WindowManager::CreateWindow(int width, int height, const
 }
 
 bool WindowManager::RequestContext(Window *window) {
-    if (CurrentContext == window)
+    if (glfwGetCurrentContext() == window->window_)
         return true;
 
     glfwMakeContextCurrent(window->window_);
+    CurrentContext = window;
 }
 
 void WindowManager::RemoveIfCurrent(Window *window) {
-    if (CurrentContext == window)
+    if (glfwGetCurrentContext() == window->window_) {
+        glfwMakeContextCurrent(nullptr);
         CurrentContext = nullptr;
+    }
 }
 
 void WindowManager::Shutdown() { // NOLINT(*-convert-member-functions-to-static)

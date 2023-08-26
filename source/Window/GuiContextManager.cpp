@@ -11,11 +11,8 @@
 namespace Window {
 
 bool GuiContextManager::RequestContext(GuiContext *context) {
-    if (CurrentContext == context)
-        return true;
     
     ImGui::SetCurrentContext(context->m_context);
-    
     CurrentContext = context;
     
     return true;

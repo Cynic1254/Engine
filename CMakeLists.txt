@@ -16,6 +16,8 @@ set(EXECUTABLE_SRC
         source/Window/GuiContextManager.cpp
         
         source/Graphics/Graphics.cpp
+        
+        source/ImGui/imgui_impl_glfw.cpp
 )
 
 set(EXECUTABLE_INC
@@ -25,10 +27,11 @@ set(EXECUTABLE_INC
         include/Window/GuiContextManager.hpp
         
         include/Graphics/Graphics.hpp
+        
+        include/ImGui/imgui_impl_glfw.h
 )
 
 set(GL_SRC
-        #source/glad.c
         include/Tools/types.hpp
         include/Graphics/GLFunctions.hpp
 )

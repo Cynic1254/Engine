@@ -17,15 +17,13 @@ GuiContext::GuiContext(Window* window) : m_window(window) {
     m_context = ImGui::CreateContext();
     GuiContextManager::GetSingleton().RequestContext(this);
     
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
-    
     ImGui_ImplGlfw_InitForOpenGL(window->GetWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 460 core");
 }
 
 GuiContext::~GuiContext() {
-    GuiContextManager::GetSingleton().RequestContext(this);
     m_window->makeContextCurrent();
+    GuiContextManager::GetSingleton().RequestContext(this);
     
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -36,8 +34,8 @@ GuiContext::~GuiContext() {
 }
 
 void GuiContext::NewFrame() {
-    GuiContextManager::GetSingleton().RequestContext(this);
     m_window->makeContextCurrent();
+    GuiContextManager::GetSingleton().RequestContext(this);
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -45,18 +43,11 @@ void GuiContext::NewFrame() {
 }
 
 void GuiContext::Render() {
-    GuiContextManager::GetSingleton().RequestContext(this);
     m_window->makeContextCurrent();
+    GuiContextManager::GetSingleton().RequestContext(this);
     
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backupCurrentContext);
-    }
 }
 
 bool GuiContext::MakeContextCurrent() {

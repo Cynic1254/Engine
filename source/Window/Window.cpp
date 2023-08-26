@@ -9,6 +9,11 @@
 
 #include <iostream>
 
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include "GLFW/glfw3native.h"
+#endif
+
 namespace Window {
 
 Window::~Window() {
@@ -25,6 +30,12 @@ Window::Window(int width, int height, const char *name) : width_(width), height_
         std::cerr << "Failed to create GLFW window" << std::endl;
     }
 
+#ifdef _WIN32
+    ::SetWindowLongPtr(glfwGetWin32Window(window_), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+#endif
+    
+    glfwSetWindowUserPointer(window_, this);
+    
     glfwMakeContextCurrent(window_);
     WindowManager::GetSingleton().CurrentContext = this;
     

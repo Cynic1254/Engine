@@ -20,7 +20,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #pragma once
-#include "imgui.h"      // IMGUI_IMPL_API
+#include "ImGui/imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
 struct GLFWwindow;

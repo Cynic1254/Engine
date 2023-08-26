@@ -15,6 +15,7 @@ class Window;
 class GuiContextManager : public Tools::Singleton<GuiContextManager>{
 public:
     std::unique_ptr<GuiContext> CreateContext(Window *window);
+    inline GuiContext* GetContext() const { return CurrentContext; };
 protected:
 private:
     GuiContextManager();

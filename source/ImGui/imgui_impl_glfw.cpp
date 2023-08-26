@@ -70,9 +70,9 @@
 //  2017-08-25: Inputs: MousePos set to -FLT_MAX,-FLT_MAX when mouse is unavailable/missing (instead of -1,-1).
 //  2016-10-15: Misc: Added a void* user_data parameter to Clipboard function handlers.
 
-#include "imgui.h"
+#include "ImGui/imgui.h"
 #ifndef IMGUI_DISABLE
-#include "imgui_impl_glfw.h"
+#include "ImGui/imgui_impl_glfw.h"
 
 // Clang warnings with -Weverything
 #if defined(__clang__)
@@ -82,12 +82,12 @@
 #endif
 
 // GLFW
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 #ifdef _WIN32
 #undef APIENTRY
 #define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>   // for glfwGetWin32Window()
+#include "GLFW/glfw3native.h"   // for glfwGetWin32Window()
 #endif
 #ifdef __APPLE__
 #define GLFW_EXPOSE_NATIVE_COCOA
@@ -127,6 +127,10 @@
 #define GLFW_HAS_GAMEPAD_API            (GLFW_VERSION_COMBINED >= 3300) // 3.3+ glfwGetGamepadState() new api
 #define GLFW_HAS_GETKEYNAME             (GLFW_VERSION_COMBINED >= 3200) // 3.2+ glfwGetKeyName()
 #define GLFW_HAS_GETERROR               (GLFW_VERSION_COMBINED >= 3300) // 3.3+ glfwGetError()
+
+#include "Window/Window.hpp"
+#include "Window/GuiContext.hpp"
+#include "Window/GuiContextManager.hpp"
 
 // GLFW data
 enum GlfwClientApi
@@ -325,6 +329,11 @@ static bool ImGui_ImplGlfw_ShouldChainCallback(GLFWwindow* window)
 
 void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackMousebutton != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackMousebutton(window, button, action, mods);
@@ -334,10 +343,18 @@ void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int acti
     ImGuiIO& io = ImGui::GetIO();
     if (button >= 0 && button < ImGuiMouseButton_COUNT)
         io.AddMouseButtonEvent(button, action == GLFW_PRESS);
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackScroll != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackScroll(window, xoffset, yoffset);
@@ -349,6 +366,9 @@ void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yo
 
     ImGuiIO& io = ImGui::GetIO();
     io.AddMouseWheelEvent((float)xoffset, (float)yoffset);
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 static int ImGui_ImplGlfw_TranslateUntranslatedKey(int key, int scancode)
@@ -386,6 +406,11 @@ static int ImGui_ImplGlfw_TranslateUntranslatedKey(int key, int scancode)
 
 void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int keycode, int scancode, int action, int mods)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackKey != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackKey(window, keycode, scancode, action, mods);
@@ -404,20 +429,36 @@ void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int keycode, int scancode, i
     ImGuiKey imgui_key = ImGui_ImplGlfw_KeyToImGuiKey(keycode);
     io.AddKeyEvent(imgui_key, (action == GLFW_PRESS));
     io.SetKeyEventNativeData(imgui_key, keycode, scancode); // To support legacy indexing (<1.87 user code)
+
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 void ImGui_ImplGlfw_WindowFocusCallback(GLFWwindow* window, int focused)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackWindowFocus != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackWindowFocus(window, focused);
 
     ImGuiIO& io = ImGui::GetIO();
     io.AddFocusEvent(focused != 0);
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 void ImGui_ImplGlfw_CursorPosCallback(GLFWwindow* window, double x, double y)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackCursorPos != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackCursorPos(window, x, y);
@@ -432,12 +473,19 @@ void ImGui_ImplGlfw_CursorPosCallback(GLFWwindow* window, double x, double y)
     }
     io.AddMousePosEvent((float)x, (float)y);
     bd->LastValidMousePos = ImVec2((float)x, (float)y);
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 // Workaround: X11 seems to send spurious Leave/Enter events which would make us lose our position,
 // so we back it up and restore on Leave/Enter (see https://github.com/ocornut/imgui/issues/4984)
 void ImGui_ImplGlfw_CursorEnterCallback(GLFWwindow* window, int entered)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackCursorEnter != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackCursorEnter(window, entered);
@@ -454,16 +502,26 @@ void ImGui_ImplGlfw_CursorEnterCallback(GLFWwindow* window, int entered)
         bd->MouseWindow = nullptr;
         io.AddMousePosEvent(-FLT_MAX, -FLT_MAX);
     }
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 void ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    auto* win = (Window::Window*)glfwGetWindowUserPointer(window);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackChar != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
         bd->PrevUserCallbackChar(window, c);
 
     ImGuiIO& io = ImGui::GetIO();
     io.AddInputCharacter(c);
+    
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
 }
 
 void ImGui_ImplGlfw_MonitorCallback(GLFWmonitor*, int)
@@ -504,6 +562,11 @@ static ImGuiMouseSource GetMouseSourceFromMessageExtraInfo()
 }
 static LRESULT CALLBACK ImGui_ImplGlfw_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    Window::GuiContext* prev_ctx = Window::GuiContextManager::GetSingleton().GetContext();
+    
+    Window::Window* win = (Window::Window*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+    win->GetGuiContext().MakeContextCurrent();
+    
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     switch (msg)
     {
@@ -525,12 +588,17 @@ static LRESULT CALLBACK ImGui_ImplGlfw_WndProc(HWND hWnd, UINT msg, WPARAM wPara
         // If you cannot easily access those viewport flags from your windowing/event code: you may manually synchronize its state e.g. in
         // your main loop after calling UpdatePlatformWindows(). Iterate all viewports/platform windows and pass the flag to your windowing system.
         ImGuiViewport* viewport = (ImGuiViewport*)::GetPropA(hWnd, "IMGUI_VIEWPORT");
-        if (viewport && (viewport->Flags & ImGuiViewportFlags_NoInputs))
+        if (viewport && (viewport->Flags & ImGuiViewportFlags_NoInputs)) {
+            if (prev_ctx)
+                prev_ctx->MakeContextCurrent();
             return HTTRANSPARENT;
+        }
         break;
     }
 #endif
     }
+    if (prev_ctx)
+        prev_ctx->MakeContextCurrent();
     return ::CallWindowProc(bd->GlfwWndProc, hWnd, msg, wParam, lParam);
 }
 #endif
